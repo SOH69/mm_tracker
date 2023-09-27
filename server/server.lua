@@ -38,30 +38,30 @@ RegisterNetEvent('mm_tracker:server:removeItem', function(item)
     end
 end)
 
-QBCore.Functions.CreateUseableItem("tracker", function(source, item)
-    local src = source
-    TriggerClientEvent("mm_tracker:client:useTracker", src, vehicles, item)
-end)
+if Config.Inventory then
+    QBCore.Functions.CreateUseableItem("tracker", function(source, item)
+        local src = source
+        TriggerClientEvent("mm_tracker:client:useTracker", src, vehicles, item)
+    end)
 
-
-
-CreateThread(function()
-    while true do
-        for k, v in pairs(vehicles) do
-            if ((v.time - os.time())/60) >= Config.TimeLimit then
-                vehicles[k] = nil
-                TriggerClientEvent('mm_tracker:client:expireTracker', -1, v.name)
-            else
-                v.coords = GetEntityCoords(v.obj)
+    CreateThread(function()
+        while true do
+            for k, v in pairs(vehicles) do
+                if ((v.time - os.time())/60) >= Config.TimeLimit then
+                    vehicles[k] = nil
+                    TriggerClientEvent('mm_tracker:client:expireTracker', -1, v.name)
+                else
+                    v.coords = GetEntityCoords(v.obj)
+                end
             end
+            TriggerClientEvent('mm_tracker:client:sendTracker', -1, vehicles)
+            Wait(Config.RefreshRate*1000)
         end
-        TriggerClientEvent('mm_tracker:client:sendTracker', -1, vehicles)
-        Wait(Config.RefreshRate*1000)
-    end
-end)
+    end)
 
-lib.addCommand("removetracker", {
-    help = "Remove Tracker from vehicle",
-}, function(source)
-    TriggerClientEvent("mm_tracker:client:removeTracker", source, vehicles)
-end)
+    lib.addCommand("removetracker", {
+        help = "Remove Tracker from vehicle",
+    }, function(source)
+        TriggerClientEvent("mm_tracker:client:removeTracker", source, vehicles)
+    end)
+end
