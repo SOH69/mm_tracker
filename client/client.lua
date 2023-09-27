@@ -96,6 +96,7 @@ RegisterNetEvent('mm_tracker:client:useTracker', function(veh)
             }, {}, {}, {}, function() -- Done
                 DeleteEntity(tracker)
                 TriggerServerEvent('mm_tracker:server:setobj', NetworkGetNetworkIdFromEntity(vehicle), QBCore.Functions.GetPlate(vehicle))
+                TriggerServerEvent('mm_tracker:server:removeItem')
                 ClearPedTasksImmediately(cache.ped)
                 ResetPedMovementClipset(cache.ped, 0.25)
             end)
