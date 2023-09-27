@@ -28,19 +28,19 @@ RegisterNetEvent('mm_tracker:server:returnTracker', function(id, name)
     vehicles[id] = nil
 end)
 
-RegisterNetEvent('mm_tracker:server:removeItem', function()
+RegisterNetEvent('mm_tracker:server:removeItem', function(item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Config.Inventory == 'ox_inventory' then
-        exports.ox_inventory:RemoveItem(src, "tracker", 1)
+        exports.ox_inventory:RemoveItem(src, "tracker", 1, false, item.slot)
     elseif Config.Inventory then
-        Player.Functions.RemoveItem("tracker", 1)
+        Player.Functions.RemoveItem("tracker", 1, item.slot)
     end
 end)
 
 QBCore.Functions.CreateUseableItem("tracker", function(source, item)
     local src = source
-    TriggerClientEvent("mm_tracker:client:useTracker", src, vehicles)
+    TriggerClientEvent("mm_tracker:client:useTracker", src, vehicles, item)
 end)
 
 

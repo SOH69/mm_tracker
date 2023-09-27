@@ -71,9 +71,17 @@ RegisterNetEvent('mm_tracker:client:sendTracker', function(veh)
     end
 end)
 
-RegisterNetEvent('mm_tracker:client:useTracker', function(veh)
+RegisterNetEvent('mm_tracker:client:useTracker', function(veh, item)
     local coords = GetEntityCoords(cache.ped)
     local vehicle, vehcoords = lib.getClosestVehicle(coords, 5.0, false)
+    if vehicle == -1 then
+        lib.notify({
+            title = 'Failed',
+            description = 'No vehicles Found',
+            type = 'error'
+        })
+        return
+    end
     local distance = #(coords - vehcoords)
     if PlayerData.job and PlayerData.job.name == 'police' then
         for _, v in pairs(veh) do
@@ -96,7 +104,7 @@ RegisterNetEvent('mm_tracker:client:useTracker', function(veh)
             }, {}, {}, {}, function() -- Done
                 DeleteEntity(tracker)
                 TriggerServerEvent('mm_tracker:server:setobj', NetworkGetNetworkIdFromEntity(vehicle), QBCore.Functions.GetPlate(vehicle))
-                TriggerServerEvent('mm_tracker:server:removeItem')
+                TriggerServerEvent('mm_tracker:server:removeItem', item)
                 ClearPedTasksImmediately(cache.ped)
                 ResetPedMovementClipset(cache.ped, 0.25)
             end)
